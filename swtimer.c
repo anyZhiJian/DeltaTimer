@@ -9,7 +9,7 @@ struct swtim_t
     uint32_t state : 1;
 };
 
-static uint32_t sys_ticks;
+volatile static uint32_t swtim_systicks;
 
 swtim_t *swtim_create(uint32_t period_ticks, swtim_cb_t cb, void *user_data)
 {
@@ -33,23 +33,11 @@ void swtim_delete(swtim_t *timer)
     timer = NULL;
 }
 
-void swtim_create_init(swtim_t *timer, uint32_t period_ticks, swtim_cb_t cb, void *user_data)
-{
-    if (!timer || timer->state)
-        return;
-    if (period_ticks > SWTIM_MAX_TICKS)
-        period_ticks = SWTIM_MAX_TICKS;
-    timer->period_ticks = period_ticks;
-    timer->target_ticks = 0;
-    timer->user_data = user_data;
-    timer->cb = cb;
-}
-
 void swtim_start(swtim_t *timer)
 {
     if (!timer || timer->state)
         return;
-    timer->target_ticks = timer->period_ticks + sys_ticks;
+    timer->target_ticks = timer->period_ticks + swtim_systicks;
     timer->state = 1;
 }
 
@@ -62,15 +50,15 @@ void swtim_stop(swtim_t *timer)
 
 void swtim_sys_inc(uint16_t ticks)
 {
-    sys_ticks += ticks;
+    swtim_systicks += ticks;
 }
 
 void swtim_handler(swtim_t *timer)
 {
     if (!timer || !timer->state)
         return;
-    uint32_t now_ticks = sys_ticks;
-    if ((int)now_ticks - (int)timer->target_ticks >= 0)
+    uint32_t now_ticks = swtim_systicks;
+    if ((int32_t)(now_ticks - timer->target_ticks) >= 0)
     {
         timer->target_ticks = now_ticks + timer->period_ticks;
         if (timer->cb)
@@ -86,7 +74,7 @@ void swtim_register_callback(swtim_t *timer, swtim_cb_t cb, void *user_data)
     timer->cb = cb;
 }
 
-void swtim_set_period(swtim_t *timer, uint16_t period_ticks)
+void swtim_set_period(swtim_t *timer, uint32_t period_ticks)
 {
     if (!timer)
         return;
