@@ -5,8 +5,7 @@
 #include <stdlib.h>
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 #define swtim_malloc(size) malloc(size)
@@ -20,7 +19,7 @@ swtim_t *swtim_create(uint32_t period_ticks, swtim_cb_t cb, void *user_data);
 void swtim_delete(swtim_t *timer);
 void swtim_start(swtim_t *timer);
 void swtim_stop(swtim_t *timer);
-void swtim_sys_inc(uint16_t ticks);
+void swtim_systick_inc(uint16_t ticks);
 void swtim_handler(swtim_t *timer);
 void swtim_register_callback(swtim_t *timer, swtim_cb_t cb, void *user_data);
 void swtim_set_period(swtim_t *timer, uint32_t period_ticks);
