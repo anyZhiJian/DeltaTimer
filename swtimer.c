@@ -45,7 +45,6 @@ void swtim_stop(swtim_t *timer) {
 
 void swtim_systick_inc(uint16_t ticks) { swtim_systicks += ticks; }
 
-// 处理函数的频率不能比systick频率大2147483648,否则swtim_systicks计数将绕回半圈，从而导致时间线错乱
 void swtim_handler(swtim_t *timer) {
     if (!timer || !timer->state)
         return;

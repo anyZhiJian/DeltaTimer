@@ -1,12 +1,12 @@
 #ifndef __SWTIMER_H
 #define __SWTIMER_H
 
-#include <stdint.h>
-#include <stdlib.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include <stdint.h>
+#include <stdlib.h>
 
 #define swtim_malloc(size) malloc(size)
 #define swtim_free(ptr) free(ptr)
